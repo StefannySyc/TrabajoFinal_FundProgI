@@ -1,0 +1,75 @@
+import random
+
+class Curso:
+    def __init__(self, nro):
+        self.nro = nro
+        self.nota = 0
+        self.nomCurso = ["Matematica", "Ciencias Sociales", "Comunicacion"]
+   
+    def asignarNotas(self):
+        self.nota = [random.randint(1,20) for _ in self.nomCurso]
+
+    def __str__(self):
+        notas_str = "\n".join(f"  {curso}: {nota}" for curso, nota in zip(self.nomCurso, self.nota))
+        return f"{self.nro}: Curso - {notas_str}"
+   
+    def __repr__(self):
+        return "\n" + str(self)
+
+class Alumno:
+    def __init__(self, nro, nombre):
+        self.nro = nro
+        self.nombre = nombre
+        self.estado = "m"
+   
+    def __str__(self):
+        if self.estado == "m":
+            est = "Matriculado"
+        elif self.estado == "nm":
+            est = "No Matriculado"
+        return f"{self.nro}: {self.nombre} ({est})"
+   
+    def __repr__(self):
+        return "\n" + str(self)
+
+cursos = []
+alumnos = []
+
+opc = 0
+while opc != 9:
+    opc = int(input("Seleccione: 1-Crear alumno, 2-Ingresar alumnos no matriculados, 3-Listar estado de alumnos, 4-Notas, 9-Fin:\n"))
+    if opc == 1:
+        codnro = input("Ingrese codigo de alumno a agregar: ")
+        nomalum = input("Ingrese nombre del alumno a agregar: ")
+        alum = Alumno(codnro, nomalum)
+        alumnos.append(alum)
+    if opc == 2:
+        codnro = input("Ingrese cod de alumno no matriculado: ")
+        for alum in alumnos:
+            if alum.nro == codnro:
+                if alum.estado == "m":
+                    alum.estado = "nm"
+                    print(f"Alumno {codnro} no fue matriculado.")
+                else:
+                    print(f"ERROR: El cod de alumno no esta disponible")    
+                break
+        else:
+            print(f"No se encontró un alumno con ese código.")
+    elif opc == 3:
+        for alumno in alumnos:
+            print(alumno)
+        print()
+    elif opc == 4:
+        codnro = input("Ingrese codigo de alumno a consultar: ")
+        alumn = next((alumno for alumno in alumnos if alumno.nro == codnro), None)
+        if alumn:
+            curs = Curso(codnro)
+            if alumn.estado == "nm":
+                curs.nota = [0] * len(curs.nomCurso)
+            else:
+                curs.asignarNotas()
+            cursos.append(curs)
+            alumn.nota = curs.nota
+            print(curs)
+        else:
+            print("No se encontró un alumno con ese código.")
